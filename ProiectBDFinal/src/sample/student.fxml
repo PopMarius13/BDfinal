@@ -10,7 +10,7 @@
 
     <top>
         <VBox>
-            <ToolBar>
+            <ToolBar stylesheets="@styles1.css">
                 <HBox alignment="CENTER" style="-fx-spacing: 20">
                     <ImageView fx:id="logoImage" fitHeight="55" fitWidth="65">
                     </ImageView>
@@ -22,7 +22,7 @@
                     </Button>
                 </HBox>
             </ToolBar>
-            <ToolBar>
+            <ToolBar stylesheets="@styles1.css">
                 <HBox style="-fx-spacing: 20">
                     <Button onAction="#handleClickInfo" text="My information">
                     </Button>
@@ -85,7 +85,7 @@
                 <TextField fx:id="mess">
 
                 </TextField>
-                <Button text="Send" onAction="#handleClickSend">
+                <Button text="Send" onAction="#handleClickSend" >
 
                 </Button>
             </HBox>

@@ -16,6 +16,11 @@ public class Grup {
     public Grup() {
     }
 
+    public Grup(int id, int idMaterie) {
+        this.id = id;
+        this.idMaterie = idMaterie;
+    }
+
     public Grup(int id, String materie) {
         this.id = id;
         Materie = materie;

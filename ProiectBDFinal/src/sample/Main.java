@@ -11,8 +11,8 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-       // Parent root = FXMLLoader.load(getClass().getResource("student.fxml"));
-        // Parent root = FXMLLoader.load(getClass().getResource("profesor.fxml"));
+        //Parent root = FXMLLoader.load(getClass().getResource("student.fxml"));
+         //Parent root = FXMLLoader.load(getClass().getResource("profesor.fxml"));
         primaryStage.setTitle("Platform UTCN");
         primaryStage.setScene(new Scene(root, 1200, 700));
         primaryStage.setMinHeight(700);

@@ -38,10 +38,16 @@
 
             <ListView fx:id="note" />
             </VBox>
-            <VBox alignment="CENTER" spacing="10">
+            <VBox alignment="CENTER" spacing="20">
+                <VBox spacing=" 10">
                 <Button text="Add grade" onAction="#handleClickAdd"/>
                 <Button text="Upgrade grade" onAction="#handleClickUp"/>
-               <HBox.margin>
+                </VBox>
+                <VBox spacing="10">
+                    <Button text="View all grades" onAction="#handleClickViewGrades"/>
+                    <Button text="Download grades" onAction="#handleClickDownloadGrades"/>
+                </VBox>
+                <HBox.margin>
                   <Insets bottom="5.0" />
                </HBox.margin>
             </VBox>

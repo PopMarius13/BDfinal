@@ -18,7 +18,7 @@
             fx:controller="sample.SignUp"
             prefHeight="400.0" prefWidth="600.0">
     <top>
-        <ToolBar>
+        <ToolBar stylesheets="@styles1.css">
             <HBox alignment="CENTER" style="-fx-spacing: 20">
                 <ImageView fx:id="logoImage" fitWidth="65" fitHeight="55" onMouseClicked="#handleClickLogoImage">
                 </ImageView>
@@ -201,7 +201,7 @@
                 </VBox.margin>
             </VBox>
             <HBox style="-fx-spacing: 20 " alignment="CENTER">
-                <Button  alignment="CENTER" prefHeight="25.0"  text="Sign Up" VBox.vgrow="NEVER" onAction="#handleClickSignUp" >
+                <Button stylesheets="@styles2.css" alignment="CENTER" prefHeight="25.0"  text="Sign Up" VBox.vgrow="NEVER" onAction="#handleClickSignUp" >
                     <VBox.margin>
                         <Insets top="20.0" />
                     </VBox.margin>

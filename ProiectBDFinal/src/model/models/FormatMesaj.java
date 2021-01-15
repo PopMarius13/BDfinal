@@ -30,6 +30,6 @@ public class FormatMesaj {
 
     @Override
     public String toString() {
-        return student + "\n\t" + mesaj ;
+        return student + ":\n\t" + mesaj ;
     }
 }

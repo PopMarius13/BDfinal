@@ -101,8 +101,9 @@ public class Student {
     @FXML
     public void handleClickSend(){
         String s = mess.getText();
-        SignInHelper.sendMesaj(s , grup);      /// implementare sendMess
+        SignInHelper.sendMesaj(s , chooseGrup.getText());      /// implementare sendMess
         actualizareMesaje(chooseGrup.getText());
+        mess.setText("");
     }
 
     public void actualizareMesaje(String id){
@@ -112,6 +113,7 @@ public class Student {
 
         for(FormatMesaj f : list){
             me.append(f.toString());
+            me.append("\n");
         }
 
         chatMess.setText(me.toString());

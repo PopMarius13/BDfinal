@@ -90,6 +90,7 @@ public class GrupuriStudent {
         SignInHelper.insertGrup(listaGrupuri.getSelectionModel().getSelectedIndex());
         SignInHelper.setMyGrup();
         listaGrupuri.setItems(SignInHelper.setAllGrupuri());
+        listaGrupuriCreate.setItems(SignInHelper.setMyGrup());
     }
 
     public void clickInscriereActivity(){

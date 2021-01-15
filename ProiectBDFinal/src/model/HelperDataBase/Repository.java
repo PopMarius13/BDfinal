@@ -243,7 +243,7 @@ public class Repository {
 
         public static final String INSERT_GRUPURI = "INSERT INTO " + TABLE_GRUPURI + " ( " + COLUMN_ID_MATERIE + " ) VALUES ( ? )";
 
-        public static final String QUERY_GRUP_BY_MATERIE = "SELECT " + TABLE_GRUPURI + "." + COLUMN_ID + ", " + TABLE_GRUPURI + "." + COLUMN_NUME  + " FROM " + TABLE_GRUPURI +
+        public static final String QUERY_GRUP_BY_MATERIE = "SELECT " + TABLE_GRUPURI + "." + COLUMN_ID + ", " + TABLE_GRUPURI + "." + COLUMN_ID_MATERIE  + " FROM " + TABLE_GRUPURI +
                 " WHERE " + TABLE_GRUPURI + "." + COLUMN_ID_MATERIE + " = ? "; //// nume + profesor
 
         public static final String QUERY_CHAT_BY_GRUP = "SELECT " + TABLE_MESAJE + "." + COLUMN_MESAJ + ", " + TABLE_MESAJE + "." + COLUMN_ID_STUDENT + " FROM " + TABLE_MESAJE +
@@ -339,6 +339,8 @@ public class Repository {
 
         public static final String QUERY_AMINISTRATOR = "SELECT * FROM " + TABLE_ADMINISTRATOR;
 
+        public static final String QUERY_NOTE_BY_PROFESOR =  "SELECT * FROM " + TABLE_CATALOG + " WHERE " + TABLE_CATALOG + "." + COLUMN_ID_PROFESOR_ACT + " = ?";
+
         //INSERT
 
 
@@ -367,6 +369,8 @@ public class Repository {
         //Querys end:
 
         private PreparedStatement queryConturi;
+
+        private PreparedStatement queryNoteProf;
 
         private PreparedStatement queryAdministratorByID;
 
@@ -586,6 +590,7 @@ public class Repository {
                 queryAdministrator = conn.prepareStatement(QUERY_AMINISTRATOR);
                 queryStudent = conn.prepareStatement(QUERY_STUDENT);
                 queryProfesor = conn.prepareStatement(QUERY_PROFESOR);
+                queryNoteProf = conn.prepareStatement(QUERY_NOTE_BY_PROFESOR);
 
                 return true;
             } catch (SQLException e) {
@@ -596,6 +601,9 @@ public class Repository {
 
         public void close() {
             try {
+                if (queryNoteProf != null) {
+                    queryNoteProf.close();
+                }
                 if (queryProfesor != null) {
                     queryProfesor.close();
                 }
@@ -1084,7 +1092,7 @@ public class Repository {
                 ResultSet result = queryGrupuriByMaterie.executeQuery();
 
                 if (result.next())
-                    return new Grup(result.getInt(1), result.getString(2));
+                    return new Grup(result.getInt(1), result.getInt(2));
                 return null;
 
             } catch (SQLException e) {
@@ -1818,7 +1826,7 @@ public class Repository {
                     activitate.setMinPart(resultSet.getInt(3));
                     activitate.setTermenLimita(resultSet.getDate(4));
                     activitate.setData(resultSet.getDate(7));
-
+                    activitate.setIdGrup(resultSet.getInt(5));
                     int idProf = resultSet.getInt(6);
                     String prof = null;
                     queryProfesorByID.setInt(1, idProf);
@@ -1850,6 +1858,7 @@ public class Repository {
                     activitate.setMinPart(resultSet.getInt(3));
                     activitate.setTermenLimita(resultSet.getDate(4));
                     activitate.setData(resultSet.getDate(7));
+                    activitate.setIdGrup(resultSet.getInt(5));
 
                     int idProf = resultSet.getInt(6);
                     String prof = null;
@@ -1946,6 +1955,30 @@ public class Repository {
             }
         }
 
+        public Catalog noteProf (int idProf){
+            try {
+                queryNoteProf.setInt(1 , idProf);
+                ResultSet result = queryNoteProf.executeQuery();
+
+                Catalog catalog = new Catalog();
+                while (result.next()) {
+                    String nume = getQueryStudentForName(result.getInt(3));
+
+                    Nota nota = new Nota();
+                    nota.setProfesor(result.getString(2));
+                    nota.setStudent(nume);
+                    nota.setMaterie(getQueryActivitateForName(result.getInt(4)));
+                    nota.setGrade(result.getInt(5));
+                    nota.setDate(result.getDate(6));
+                    nota.setIdActivity(result.getInt(4));
+                    catalog.addNota(nota);
+                }
+                return catalog;
+            } catch (SQLException e) {
+                System.out.println("Query Note Studenti failed : " + e.getMessage());
+                return null;
+            }
+        }
 
         public List<Student> queryStudent() {
             List<Student> students = new ArrayList<>();

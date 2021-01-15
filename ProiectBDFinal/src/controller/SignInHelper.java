@@ -98,7 +98,7 @@ public class SignInHelper {
                     return 0;
             }
             addDate();
-
+            if(cont.getRestriction() == 4) return 3;
             return  cont.getRestriction();
         }
         else {
@@ -292,17 +292,24 @@ public class SignInHelper {
         descriereCurs.setAll(cursuri5);
     }
 
-    public static void enrollCurs(int curs){
+    public static boolean enrollCurs(int curs){
         ArrayList<Activity> cursuri1 = (ArrayList<Activity>) repository.vizualizareCursuriNeinscris(cont.getIdUtilizator());
-
+        boolean ok = true;
         for(Activity curs1 : cursuri1){
             if(curs1.getNume().equals(restulCursurilor.get(curs).getNume()) && curs1.getProfesor().equals(restulCursurilor.get(curs).getProfesor())){
-                System.out.println(repository.registrationForTheActivity(cont.getIdUtilizator(), curs1.getNume() , curs1.getTip()));
+                if(!repository.registrationForTheActivity(cont.getIdUtilizator(), curs1.getNume() , curs1.getTip())){
+                    ok = false;
+                }
             }
         }
+
+        if(!ok){
+            repository.giveUpActivity(restulCursurilor.get(curs).getNume() , cont.getIdUtilizator());
+        }
+
+        return ok;
     }
     public static void renuntareCurs(int curs){
-        System.out.println(curs);
         repository.giveUpActivity(cursurileMele.get(curs).getNume() , cont.getIdUtilizator());
     }
 
@@ -343,7 +350,8 @@ public class SignInHelper {
 
         for(ActivitateGrup activitateGrup : activitateGrups){
             activitateGrupArrayList.add(activitateGrup);
-            if(myGrup.get(index).getId().equals(activitateGrup.get_id() + "")){
+            System.out.println(index + " --- " + activitateGrup.getIdGrup() + "  " + myGrup.get(index).getId());
+            if(myGrup.get(index).getId().equals(activitateGrup.getIdGrup() + "")){
                 formatActivitateGrups.add(new formatActivitateGrup(activitateGrup.getName() , activitateGrup.getMinPart() + "" , activitateGrup.getTermenLimita().toString() , activitateGrup.getData().toString() , activitateGrup.getProfesor()));
          }
         }
@@ -360,7 +368,9 @@ public class SignInHelper {
         for(ActivitateGrup activitateGrup : activitateGrups) {
             if (!activitateGrupArrayList.contains(activitateGrup)) {
                 activitateGrupNuArrayList.add(activitateGrup);
-                formatActivitateGrups.add(new formatActivitateGrup(activitateGrup.getName(), activitateGrup.getMinPart() + "", activitateGrup.getTermenLimita().toString(), activitateGrup.getData().toString(), activitateGrup.getProfesor()));
+                System.out.println(index + " --- " + activitateGrup.getIdGrup());
+                if(myGrup.get(index).getId().equals(activitateGrup.getIdGrup() + ""))
+                    formatActivitateGrups.add(new formatActivitateGrup(activitateGrup.getName(), activitateGrup.getMinPart() + "", activitateGrup.getTermenLimita().toString(), activitateGrup.getData().toString(), activitateGrup.getProfesor()));
             }
         }
         activitatiGrupNuParticip.setAll(formatActivitateGrups);
@@ -375,15 +385,19 @@ public class SignInHelper {
         myGrup = FXCollections.observableArrayList();
         List<Grup> grupuri = repository.getGrupuriForStudent(cont.getIdUtilizator());
         ArrayList<formatGrupuri> formatGrupuris = new ArrayList<>();
+
         for (Grup grup: grupuri){
-            if(grup != null)
-              formatGrupuris.add(new formatGrupuri(grup.getId()+"" , toateCursurile.get(grup.getIdMaterie() - 1).getNume()));
+            if(grup != null){
+
+              formatGrupuris.add(new formatGrupuri(grup.getId()+"" , toateCursurileAll.get(grup.getIdMaterie()).getNume()));
+            }
         }
         myGrup.setAll(formatGrupuris);
         return myGrup;
     }
     public static ObservableList<formatGrupuri> setAllGrupuri(){
         addCursuri();
+        setMyGrup();
 
         ArrayList<Activity> cursuri1 = (ArrayList<Activity>) repository.vizualizareCursuriInscris(cont.getIdUtilizator());
         ArrayList<formatGrupuri> formatGrupuris = new ArrayList<>();
@@ -394,6 +408,7 @@ public class SignInHelper {
             Grup grup = repository.queryGrupByIdMaterie(curs.getId());
             if (grup == null){
                 idGrup = repository.insertGrup(curs.getId());
+                grup = repository.queryGrupByIdMaterie(curs.getId());
             }else{
                 idGrup = grup.getId();
                 grup = repository.queryGrupByIdMaterie(curs.getId());
@@ -406,12 +421,10 @@ public class SignInHelper {
                     break;
                 }
             }
-
-            assert grup != null;
-            formatGrupuri formatGrupuri = new formatGrupuri(idGrup + "",toateCursurile.get(Integer.parseInt(grup.getMaterie()) - 1).getNume());
-            if (ok && !allGrup.contains(formatGrupuri))
+            formatGrupuri formatGrupuri = new formatGrupuri(idGrup + "",toateCursurileAll.get(grup.getIdMaterie()).getNume());
+            if (ok && !allGrup.contains(formatGrupuri)) {
                 formatGrupuris.add(formatGrupuri);
-
+            }
         }
         allGrup.setAll(formatGrupuris);
 
@@ -592,6 +605,9 @@ public class SignInHelper {
 
     public static List<FormatMesaj> actualizareMesaje(String idGrup){
         int id = 1;
+
+        mesajs = new ArrayList<>();
+
         for(formatGrupuri f : myGrup){
             if(f.getNume().equals(idGrup))
                 id = Integer.parseInt(f.getId());
@@ -599,7 +615,8 @@ public class SignInHelper {
         List<Mesaj> mesaje = repository.queryMesaje(id);
 
         for(Mesaj mesaj : mesaje){
-            mesajs.add(new FormatMesaj(repository.getQueryActivitateForName(mesaj.getIdStudent()) , mesaj.getMess()));
+            System.out.println(mesaj.getMess() + " " + mesaj.getIdStudent() + " " + repository.getQueryActivitateForName(mesaj.getIdStudent()));
+            mesajs.add(new FormatMesaj(mesaj.getMess(), repository.queryStudentByID(mesaj.getIdStudent()).getNume()));
         }
 
         return mesajs;
@@ -617,8 +634,10 @@ public class SignInHelper {
     public static void sendMesaj(String mes , String idGrup){
         int id = 1;
         for(formatGrupuri f : myGrup){
-            if(f.getNume().equals(idGrup))
+            if(f.getNume().contains(idGrup)) {
+                System.out.println(idGrup + " " + f.getNume());
                 id = Integer.parseInt(f.getId());
+            }
         }
         repository.postMesaj(mes , cont.getIdUtilizator() , id);
     }
@@ -791,4 +810,15 @@ public class SignInHelper {
     public static int getIdUtil(){
         return cont.getIdUtilizator();
     }
+
+    public static String noteProf(){
+        Catalog catalog = repository.noteProf(cont.getIdUtilizator());
+        StringBuilder s = new StringBuilder();
+
+        for(Nota n : catalog.getNote()){
+            s.append(n.getGrade()).append("\t").append(n.getStudent()).append("\t").append(n.getMaterie()).append("\t").append(n.getDate()).append("\n");
+        }
+        return s.toString();
+    }
+
 }

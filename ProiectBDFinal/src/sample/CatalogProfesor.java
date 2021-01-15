@@ -1,13 +1,19 @@
 package sample;
 
 import controller.SignInHelper;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.DirectoryChooser;
 import javafx.util.Callback;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Optional;
 
 public class CatalogProfesor {
@@ -17,6 +23,8 @@ public class CatalogProfesor {
     private ListView<String>  studentiPeActivitate;
     @FXML
     private ListView<String>  note;
+
+    private StringBuilder grades;
 
     public void initialize(){
         activitatiProfesor.setItems(SignInHelper.activitatiprof());
@@ -130,4 +138,40 @@ public class CatalogProfesor {
         }
     }
 
+    public void handleClickViewGrades(ActionEvent event) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Grades");
+        alert.setHeaderText(null);
+        alert.setContentText(SignInHelper.noteProf());
+
+        alert.showAndWait();
+
+    }
+
+    public void handleClickDownloadGrades(ActionEvent event) {
+
+        DirectoryChooser dirChooser = new DirectoryChooser();
+        File chosenDir = dirChooser.showDialog(activitatiProfesor.getScene().getWindow());
+        try {
+            File myObj = new File(chosenDir.getPath() + "Grades.txt");
+            if (myObj.createNewFile()) {
+                System.out.println("File created: " + myObj.getName());
+            } else {
+                System.out.println("File already exists.");
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+
+        try {
+            FileWriter myWriter = new FileWriter(chosenDir.getPath() + "/Grades.txt");
+            myWriter.write(SignInHelper.noteProf());
+            myWriter.close();
+            System.out.println("Successfully wrote to the file.");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
 }

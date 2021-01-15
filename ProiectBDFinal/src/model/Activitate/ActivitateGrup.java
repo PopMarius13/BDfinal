@@ -9,9 +9,18 @@ public class ActivitateGrup {
     private Date termenLimita;
     private Date data;
     private String profesor;
+    private int idGrup;
 
     public int get_id() {
         return _id;
+    }
+
+    public int getIdGrup() {
+        return idGrup;
+    }
+
+    public void setIdGrup(int idGrup) {
+        this.idGrup = idGrup;
     }
 
     public void set_id(int _id) {
